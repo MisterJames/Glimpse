@@ -2,39 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Xml.Serialization;
 using Glimpse.Core.Configuration;
 using Glimpse.Core.Extensibility;
+using Glimpse.Core.Framework;
 
 namespace Glimpse.Core.Policy
 {
     /// <summary>
     /// Policy which will set Glimpse's runtime policy to <c>Off</c> if a Http request's Uri matches a pattern in the black list.
     /// </summary>
-    public class UriPolicy : IRuntimePolicy, IConfigurable
+    public class UriPolicy : IRuntimePolicy, IConfigurableExtended
     {
+        public IConfigurator Configurator { get; private set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="UriPolicy" /> class with an empty black list.
         /// </summary>
         public UriPolicy()
-            : this(new List<Regex>())
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UriPolicy" /> class with the provided <paramref name="uriBlackList"/>.
-        /// </summary>
-        /// <param name="uriBlackList">The Uri black list to validate against. Regular expressions are also supported in the black list.</param>
-        /// <exception cref="System.ArgumentNullException">Exception thrown if <paramref name="uriBlackList"/> is <c>null</c>.</exception>
-        public UriPolicy(IList<Regex> uriBlackList)
-        {
-            if (uriBlackList == null)
-            {
-                throw new ArgumentNullException("uriBlackList");
-            }
-
-            UriBlackList = uriBlackList;
-            UriBlackList.Add(new Regex("__browserLink/requestData"));
+            UriBlackList = new List<Regex>();
+            Configurator = new UriPolicyConfigurator(this);
         }
 
         /// <summary>
@@ -55,6 +42,7 @@ namespace Glimpse.Core.Policy
         /// The Uri black list to validate against.
         /// </value>
         public IList<Regex> UriBlackList { get; set; }
+#warning do not expose anymore
 
         /// <summary>
         /// Executes the specified policy with the given context.
@@ -119,35 +107,13 @@ namespace Glimpse.Core.Policy
             }
         }
 
-        public void ProcessCustomConfiguration(CustomConfigurationProvider customConfigurationProvider)
-        {
-            var uris = customConfigurationProvider.GetMyCustomConfigurationAs<UriPolicyUris>();
-            foreach (var uri in uris.Uris)
-            {
-                AddUriRegex(new Regex(uri.RegexPattern));
-            }
-        }
-
-        private void AddUriRegex(Regex uriRegex)
+        internal void AddUriRegex(Regex uriRegex)
         {
             string uriRegexPattern = uriRegex.ToString();
             if (UriBlackList.All(regex => regex.ToString() != uriRegexPattern))
             {
                 UriBlackList.Add(uriRegex);
             }
-        }
-
-        [XmlRoot(ElementName = "uris")]
-        public class UriPolicyUris
-        {
-            [XmlElement(ElementName = "add")]
-            public UriPolicyUri[] Uris;
-        }
-
-        public class UriPolicyUri
-        {
-            [XmlAttribute("regex")]
-            public string RegexPattern { get; set; }
         }
     }
 }

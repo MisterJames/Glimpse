@@ -4,38 +4,24 @@ using System.Linq;
 using System.Xml.Serialization;
 using Glimpse.Core.Configuration;
 using Glimpse.Core.Extensibility;
+using Glimpse.Core.Framework;
 
 namespace Glimpse.Core.Policy
 {
     /// <summary>
     /// Policy which will set Glimpse's runtime policy to <c>Off</c> if a Http response's content type is not on the white list.
     /// </summary>
-    public class ContentTypePolicy : IRuntimePolicy, IConfigurable, INeedMyCustomConfiguration
+    public class ContentTypePolicy : IRuntimePolicy, IConfigurableExtended
     {
+        public IConfigurator Configurator { get; private set; }
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="ContentTypePolicy" /> class with an empty white list.
+        /// Initializes a new instance of the <see cref="ContentTypePolicy" />
         /// </summary>
         public ContentTypePolicy()
-            : this(new List<string>())
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ContentTypePolicy" /> class with the provided <paramref name="contentTypeWhiteList"/>.
-        /// </summary>
-        /// <param name="contentTypeWhiteList">The content type white list to validate against.</param>
-        /// <exception cref="System.ArgumentNullException">Exception thrown if <paramref name="contentTypeWhiteList"/> is <c>null</c>.</exception>
-        public ContentTypePolicy(IList<string> contentTypeWhiteList)
-        {
-            if (contentTypeWhiteList == null)
-            {
-                throw new ArgumentNullException("contentTypeWhiteList");
-            }
-
-            ContentTypeWhiteList = contentTypeWhiteList;
-            ContentTypeWhiteList.Add("text/html");
-            ContentTypeWhiteList.Add("application/json");
-            ContentTypeWhiteList.Add("text/plain");
+            ContentTypeWhiteList = new List<string>();
+            Configurator = new ContentTypePolicyConfigurator(this);
         }
 
         /// <summary>
@@ -45,6 +31,7 @@ namespace Glimpse.Core.Policy
         /// The content type white list to validate against.
         /// </value>
         public IList<string> ContentTypeWhiteList { get; set; }
+#warning should not be exposed anymore, since it is the responsibility of its configurator
 
         /// <summary>
         /// Gets the point in an Http request lifecycle that a policy should execute.
@@ -112,34 +99,12 @@ namespace Glimpse.Core.Policy
             }
         }
 
-        public void ProcessCustomConfiguration(CustomConfigurationProvider customConfigurationProvider)
-        {
-            var contentTypes = customConfigurationProvider.GetMyCustomConfigurationAs<ContentTypePolicyContentTypes>();
-            foreach (var contentType in contentTypes.ContentTypes)
-            {
-                AddContentType(contentType.Value);
-            }
-        }
-
-        private void AddContentType(string contentType)
+        internal void AddContentType(string contentType)
         {
             if (!ContentTypeWhiteList.Contains(contentType))
             {
                 ContentTypeWhiteList.Add(contentType);
             }
-        }
-
-        [XmlRoot(ElementName = "contentTypes")]
-        public class ContentTypePolicyContentTypes
-        {
-            [XmlElement(ElementName = "add")]
-            public ContentTypePolicyContentType[] ContentTypes;
-        }
-
-        public class ContentTypePolicyContentType
-        {
-            [XmlAttribute("contentType")]
-            public string Value { get; set; }
         }
     }
 }

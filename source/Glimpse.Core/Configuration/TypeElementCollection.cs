@@ -6,7 +6,7 @@ namespace Glimpse.Core.Configuration
     /// The Glimpse configuration node for creating a collection of types.
     /// </summary>
     [ConfigurationCollection(typeof(TypeElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
-    public class TypeElementCollection : ConfigurationElementCollection
+    public class TypeElementCollection : System.Configuration.ConfigurationElementCollection
     {
         /// <summary>
         /// When overridden in a derived class, creates a new <see cref="T:System.Configuration.ConfigurationElement" />.

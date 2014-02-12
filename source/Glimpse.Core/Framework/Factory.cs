@@ -443,19 +443,11 @@ namespace Glimpse.Core.Framework
             return new CastleDynamicProxyFactory(InstantiateLogger(), InstantiateMessageBroker(), InstantiateTimerStrategy(), InstantiateRuntimePolicyStrategy());
         }
 
-        private static IEnumerable<Type> ToEnumerable(TypeElementCollection collection)
-        {
-            foreach (TypeElement typeElement in collection)
-            {
-                yield return typeElement.Type;
-            }
-        }
-
         private IDiscoverableCollection<T> CreateDiscoverableCollection<T>(DiscoverableCollectionElement config)
         {
             var discoverableCollection = new ReflectionDiscoverableCollection<T>(InstantiateLogger());
 
-            discoverableCollection.IgnoredTypes.AddRange(ToEnumerable(config.IgnoredTypes));
+            discoverableCollection.IgnoredTypes.AddRange(config.IgnoredTypes);
 
             // config.DiscoveryLocation (collection specific) overrides Configuration.DiscoveryLocation (on main <glimpse> node)
             var locationCascade = string.IsNullOrEmpty(config.DiscoveryLocation)
@@ -489,18 +481,42 @@ namespace Glimpse.Core.Framework
 
             var discoverableCollection = CreateDiscoverableCollection<TElementType>(configuredDiscoverableCollection);
 
+            // get the list of configurators
+            var configurators = discoverableCollection.OfType<IConfigurableExtended>()
+                .Select(configurable => configurable.Configurator)
+                .GroupBy(configurator=> configurator.CustomConfigurationKey);
+
+            // have each configurator, configure its "configurable"
+            foreach (var groupedConfigurators in configurators)
+            {
+                if (groupedConfigurators.Count() != 1)
+                {
+                    // there are multiple configurators using the same custom configuration key inside the same discoverable collection
+                    // this means that any existing custom configuration content must be resolved by using the custom configuration key
+                    // and the type for which the configurator is
+                    foreach (var configurator in groupedConfigurators)
+                    {
+                        string customConfiguration = configuredDiscoverableCollection.GetCustomConfiguration(configurator.CustomConfigurationKey, configurator.GetType());
+                        if (!string.IsNullOrEmpty(customConfiguration))
+                        {
+                            configurator.ProcessCustomConfiguration(new CustomConfigurationProvider(customConfiguration));
+                        }
+                    }       
+                }
+                else
+                {
+                    var configurator = groupedConfigurators.Single();
+                    string customConfiguration = configuredDiscoverableCollection.GetCustomConfiguration(configurator.CustomConfigurationKey);
+                    if (!string.IsNullOrEmpty(customConfiguration))
+                    {
+                        configurator.ProcessCustomConfiguration(new CustomConfigurationProvider(customConfiguration));
+                    }
+                }
+            }
+
             foreach (var configurable in discoverableCollection.OfType<IConfigurable>())
             {
                 configurable.Configure(Configuration);
-            }
-
-            foreach (var customerConfigurationRequester in discoverableCollection.OfType<INeedMyCustomConfiguration>())
-            {
-                string customConfiguration = configuredDiscoverableCollection.Setup.GetSetupFor(customerConfigurationRequester.GetType());
-                if(!string.IsNullOrEmpty(customConfiguration))
-                {
-                    customerConfigurationRequester.ProcessCustomConfiguration(new CustomConfigurationProvider(customConfiguration));
-                }
             }
 
             return discoverableCollection;

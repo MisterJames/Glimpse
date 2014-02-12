@@ -81,8 +81,8 @@
     <Compile Include="Configuration\RegexConverter.cs" />
     <Compile Include="Configuration\RegexElement.cs" />
     <Compile Include="Configuration\RegexElementCollection.cs" />
-    <Compile Include="Configuration\SetupElement.cs" />
-    <Compile Include="Configuration\SetupElementCollection.cs" />
+    <Compile Include="Configuration\CustomConfigurationElement.cs" />
+    <Compile Include="Configuration\CustomConfigurationElementCollection.cs" />
     <Compile Include="Configuration\StatusCodeElement.cs" />
     <Compile Include="Configuration\StatusCodeElementCollection.cs" />
     <Compile Include="Configuration\TypeConverter.cs" />
@@ -96,6 +96,8 @@
     <Compile Include="Extensibility\AntiXssEncoder.cs" />
     <Compile Include="Extensibility\CastleInvocationToAlternateMethodContextAdapter.cs" />
     <Compile Include="Extensibility\CustomConfigurationProvider.cs" />
+    <Compile Include="Extensibility\IConfigurableExtended.cs" />
+    <Compile Include="Extensibility\IConfigurator.cs" />
     <Compile Include="Extensibility\IDependOnResources.cs" />
     <Compile Include="Extensibility\DictionaryDataStoreAdapter.cs" />
     <Compile Include="Extensibility\ExecutionTimer.cs" />
@@ -105,7 +107,6 @@
     <Compile Include="Extensibility\IExecutionTimer.cs" />
     <Compile Include="Extensibility\IKey.cs" />
     <Compile Include="Extensibility\ILayoutControl.cs" />
-    <Compile Include="Extensibility\INeedMyCustomConfiguration.cs" />
     <Compile Include="Extensibility\IParameterValueProvider.cs" />
     <Compile Include="Extensibility\IPrivilegedResource.cs" />
     <Compile Include="Extensibility\ITabLayout.cs" />
@@ -120,6 +121,9 @@
     <Compile Include="Framework\ReflectionBlackList.cs" />
     <Compile Include="Framework\Support\ExecutionBlockBase.cs" />
     <Compile Include="Framework\Support\IExecutionTask.cs" />
+    <Compile Include="Policy\ContentTypePolicyConfigurator.cs" />
+    <Compile Include="Policy\StatusCodePolicyConfigurator.cs" />
+    <Compile Include="Policy\UriPolicyConfigurator.cs" />
     <Compile Include="Resource\ConfigurationScriptResource.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -12,8 +12,10 @@ namespace Glimpse.Test.Core.Tester
         public Mock<IRequestMetadata> RequestMetadataMock { get; set; }
         public Mock<ILogger> LoggerMock { get; set; }
 
-        private ContentTypePolicyTester(IList<string> contentTypes):base(contentTypes)
+        private ContentTypePolicyTester(IList<string> contentTypes)
         {
+            ((ContentTypePolicyConfigurator)this.Configurator).AddContentTypes(contentTypes);
+
             RequestMetadataMock = new Mock<IRequestMetadata>();
             RequestMetadataMock.Setup(r => r.ResponseContentType).Returns(@"text/html");
 

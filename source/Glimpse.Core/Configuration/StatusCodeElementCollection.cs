@@ -9,7 +9,7 @@ namespace Glimpse.Core.Configuration
     /// By default, <c>StatusCodeElementCollection</c>s contain three elements: <c>200</c>, <c>301</c> and <c>302</c>.
     /// </remarks>
     [ConfigurationCollection(typeof(StatusCodeElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
-    public class StatusCodeElementCollection : ConfigurationElementCollection
+    public class StatusCodeElementCollection : System.Configuration.ConfigurationElementCollection
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StatusCodeElementCollection" /> class with <c>200</c>, <c>301</c> and <c>302</c> added to the collection.

@@ -6,7 +6,7 @@ namespace Glimpse.Core.Configuration
     /// The Glimpse configuration node for collecting a list of regular expressions.
     /// </summary>
     [ConfigurationCollection(typeof(RegexElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
-    public class RegexElementCollection : ConfigurationElementCollection
+    public class RegexElementCollection : System.Configuration.ConfigurationElementCollection
     {
         /// <summary>
         /// When overridden in a derived class, creates a new <see cref="T:System.Configuration.ConfigurationElement" />.

@@ -72,15 +72,10 @@ namespace Glimpse.Test.Core.Policy
         public void ConstructWithWhitelistArgument()
         {
             var list = new List<string>{"anything"};
-            var policy = new ContentTypePolicy(list);
+            var policy = new ContentTypePolicy();
+            ((ContentTypePolicyConfigurator)policy.Configurator).AddContentTypes(list);
 
             Assert.Equal(list, policy.ContentTypeWhiteList);
-        }
-
-        [Fact]
-        public void ThrowExceptionWhenConstructedWithNullParameter()
-        {
-            Assert.Throws<ArgumentNullException>(() => new ContentTypePolicy(null));
         }
 
         [Fact]

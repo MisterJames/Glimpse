@@ -44,8 +44,9 @@ namespace Glimpse.Test.Core.Policy
         {
             var codes = new List<int> {5, 6, 7};
 
-            var policy = new StatusCodePolicy(codes);
-
+            var policy = new StatusCodePolicy();
+            ((StatusCodePolicyConfigurator)policy.Configurator).AddStatusCodes(codes);
+            
             foreach (var code in codes)
             {
                 Policy.RequestMetadataMock.Setup(rm => rm.ResponseStatusCode).Returns(code);
@@ -64,12 +65,6 @@ namespace Glimpse.Test.Core.Policy
             Assert.Equal(RuntimePolicy.Off, Policy.Execute(Policy.ContextMock.Object));
 
             Policy.LoggerMock.Verify(l => l.Warn(It.IsAny<string>(), exception, It.IsAny<object[]>()), Times.Once());
-        }
-
-        [Fact]
-        public void ThrowExceptionWhenConstructedWithNullParameter()
-        {
-            Assert.Throws<ArgumentNullException>(()=>new StatusCodePolicy(null));
         }
 
         [Fact]

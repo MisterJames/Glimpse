@@ -1,40 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
 using Glimpse.Core.Configuration;
 using Glimpse.Core.Extensibility;
+using Glimpse.Core.Framework;
 
 namespace Glimpse.Core.Policy
 {
     /// <summary>
     /// Policy which will set Glimpse's runtime policy to <c>Off</c> if a Http response's status code is not on the white list.
     /// </summary>
-    public class StatusCodePolicy : IRuntimePolicy, IConfigurable, INeedMyCustomConfiguration
+    public class StatusCodePolicy : IRuntimePolicy, IConfigurableExtended
     {
+        public IConfigurator Configurator { get; private set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="StatusCodePolicy" /> class with an empty white list.
         /// </summary>
         public StatusCodePolicy()
-            : this(new List<int>())
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StatusCodePolicy" /> class with the provided <paramref name="statusCodeWhiteList"/>.
-        /// </summary>
-        /// <param name="statusCodeWhiteList">The status code white list.</param>
-        /// <exception cref="System.ArgumentNullException">Exception thrown if <paramref name="statusCodeWhiteList"/> is <c>null</c>.</exception>
-        public StatusCodePolicy(IList<int> statusCodeWhiteList)
-        {
-            if (statusCodeWhiteList == null)
-            {
-                throw new ArgumentNullException("statusCodeWhiteList");
-            }
-
-            StatusCodeWhiteList = statusCodeWhiteList;
-            StatusCodeWhiteList.Add(200);
-            StatusCodeWhiteList.Add(301);
-            StatusCodeWhiteList.Add(302);
+            StatusCodeWhiteList = new List<int>();
+            Configurator = new StatusCodePolicyConfigurator(this);
         }
 
         /// <summary>
@@ -55,7 +40,7 @@ namespace Glimpse.Core.Policy
         /// The status code white list to validate against.
         /// </value>
         public IList<int> StatusCodeWhiteList { get; set; }
-
+#warning do no expose anymore
         /// <summary>
         /// Executes the specified policy with the given context.
         /// </summary>
@@ -108,34 +93,12 @@ namespace Glimpse.Core.Policy
             }
         }
 
-        public void ProcessCustomConfiguration(CustomConfigurationProvider customConfigurationProvider)
-        {
-            var statusCodes = customConfigurationProvider.GetMyCustomConfigurationAs<StatusCodePolicyStatusCodes>();
-            foreach (var statusCode in statusCodes.StatusCodes)
-            {
-                AddStatusCode(statusCode.Value);
-            }
-        }
-
-        private void AddStatusCode(int statusCode)
+        internal void AddStatusCode(int statusCode)
         {
             if (!StatusCodeWhiteList.Contains(statusCode))
             {
                 StatusCodeWhiteList.Add(statusCode);
             }
-        }
-
-        [XmlRoot(ElementName = "statusCodes")]
-        public class StatusCodePolicyStatusCodes
-        {
-            [XmlElement(ElementName = "add")]
-            public StatusCodePolicyStatusCode[] StatusCodes;
-        }
-
-        public class StatusCodePolicyStatusCode
-        {
-            [XmlAttribute("statusCode")]
-            public int Value { get; set; }
         }
     }
 }

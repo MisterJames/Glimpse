@@ -48,7 +48,7 @@ namespace Glimpse.Test.Core.Configuration
 
             Assert.True(section.ClientScripts.AutoDiscover);
             Assert.Equal("", section.ClientScripts.DiscoveryLocation);
-            Assert.True(section.ClientScripts.IgnoredTypes.Count == 1);
+            Assert.True(section.ClientScripts.IgnoredTypes.Length == 1);
         }
 
         [Fact]

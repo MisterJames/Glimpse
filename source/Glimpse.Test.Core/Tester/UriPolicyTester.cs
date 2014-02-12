@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Glimpse.Core.Extensibility;
 using Glimpse.Core.Framework;
@@ -13,8 +12,10 @@ namespace Glimpse.Test.Core.Tester
         public Mock<IRuntimePolicyContext> ContextMock { get; set; }
         public Mock<ILogger> LoggerMock { get; set; }
 
-        private UriPolicyTester():base(new List<Regex>{new Regex("blocked")})
+        private UriPolicyTester()
         {
+            ((UriPolicyConfigurator)Configurator).AddUris(new[] { new Regex("blocked") });
+
             RequestMetadataMock = new Mock<IRequestMetadata>();
             RequestMetadataMock.Setup(r => r.RequestUri).Returns("shouldn't matter!");
 

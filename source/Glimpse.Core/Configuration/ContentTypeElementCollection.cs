@@ -9,7 +9,7 @@ namespace Glimpse.Core.Configuration
     /// By default, <c>ContentTypeElementCollection</c>s contain three elements: <c>text/html</c>, <c>application/json</c> and <c>text/plain</c>.
     /// </remarks>
     [ConfigurationCollection(typeof(ContentTypeElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
-    public sealed class ContentTypeElementCollection : ConfigurationElementCollection
+    public sealed class ContentTypeElementCollection : System.Configuration.ConfigurationElementCollection
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ContentTypeElementCollection" /> class with <c>text/html</c>, <c>application/json</c> and <c>text/plain</c> added to the collection.
