@@ -1,81 +1,87 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Serialization;
-using Glimpse.Core.Configuration;
-using Glimpse.Core.Extensibility;
+using System.Xml;
 using Glimpse.Core.Framework;
 
 namespace Glimpse.Core.Policy
 {
-    public class StatusCodePolicyConfigurator : IConfigurator
+    /// <summary>
+    /// Implementation of an <see cref="IStatusCodePolicyConfigurator" />
+    /// </summary>
+    public class StatusCodePolicyConfigurator : AddRemoveClearItemsConfigurator<int>, IStatusCodePolicyConfigurator
     {
-        private StatusCodePolicy StatusCodePolicy { get; set; }
-
-        public StatusCodePolicyConfigurator(StatusCodePolicy statusCodePolicy)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StatusCodePolicyConfigurator" />
+        /// </summary>
+        public StatusCodePolicyConfigurator()
+            : base("statusCodes", new IntComparer())
         {
-            StatusCodePolicy = statusCodePolicy;
-            CustomConfigurationKey = "statusCodes";
-
-            StatusCodePolicy.AddStatusCode(200);
-            StatusCodePolicy.AddStatusCode(301);
-            StatusCodePolicy.AddStatusCode(302);
+            AddSupportedStatusCode(200);
+            AddSupportedStatusCode(301);
+            AddSupportedStatusCode(302);
         }
-
-        public string CustomConfigurationKey { get; private set; }
 
         /// <summary>
-        /// Provides implementations an instance of <see cref="Section" /> to self populate any end user configuration options.
+        /// Gets the supported status codes
         /// </summary>
-        /// <param name="section">The configuration section, <c>&lt;glimpse&gt;</c> from <c>web.config</c>.</param>
-        /// <remarks>
-        /// Populates the status code white list with values from <c>web.config</c>.
-        /// </remarks>
-        /// <example>
-        /// Configure the status code white list in <c>web.config</c> with the following entries:
-        /// <code>
-        /// <![CDATA[
-        /// <glimpse defaultRuntimePolicy="On" endpointBaseUri="~/Glimpse.axd">
-        ///     <runtimePolicies>
-        ///         <statusCodes>
-        ///             <!-- <clear /> clear to reset defaults -->
-        ///             <add statusCode="{code}" />
-        ///         </statusCodes>
-        ///     </runtimePolicies>
-        /// </glimpse>
-        /// ]]>
-        /// </code>
-        /// </example>
-        public void Configure(Section section)
+        public IEnumerable<int> SupportedStatusCodes
         {
-            foreach (StatusCodeElement item in section.RuntimePolicies.StatusCodes)
-            {
-                StatusCodePolicy.AddStatusCode(item.StatusCode);
-            }
+            get { return ConfiguredItems; }
         }
 
-        public void ProcessCustomConfiguration(CustomConfigurationProvider customConfigurationProvider)
+        /// <summary>
+        /// Gets a boolean indicating whether there are supported status codes
+        /// </summary>
+        public bool ContainsSupportedStatusCodes
         {
-            AddStatusCodes(customConfigurationProvider.GetMyCustomConfigurationAs<StatusCodePolicyStatusCodes>().StatusCodes.Select(statusCode => statusCode.Value));
-        }
-       
-        [XmlRoot(ElementName = "statusCodes")]
-        public class StatusCodePolicyStatusCodes
-        {
-            [XmlElement(ElementName = "add")]
-            public StatusCodePolicyStatusCode[] StatusCodes;
+            get { return ConfiguredItems.Count() != 0; }
         }
 
-        public class StatusCodePolicyStatusCode
-        {
-            [XmlAttribute("statusCode")]
-            public int Value { get; set; }
-        }
-
-        public void AddStatusCodes(IEnumerable<int> statusCodes)
+        /// <summary>
+        /// Adds the given status codes to the list of supported status codes
+        /// </summary>
+        /// <param name="statusCodes">The status codes</param>
+        public void AddSupportedStatusCodes(IEnumerable<int> statusCodes)
         {
             foreach (var statusCode in statusCodes)
             {
-                StatusCodePolicy.AddStatusCode(statusCode);
+                AddSupportedStatusCode(statusCode);
+            }
+        }
+
+        /// <summary>
+        /// Adds the given status code to the list of supported status codes
+        /// </summary>
+        /// <param name="statusCode">The status code</param>
+        public void AddSupportedStatusCode(int statusCode)
+        {
+            AddItem(statusCode);
+        }
+
+        /// <summary>
+        /// Creates a int representing a status code
+        /// </summary>
+        /// <param name="itemNode">The <see cref="XmlNode"/> from which a status code is created</param>
+        /// <returns>A status code</returns>
+        protected override int CreateItem(XmlNode itemNode)
+        {
+            if (itemNode != null && itemNode.Attributes != null)
+            {
+                XmlAttribute statusCodeAttribute = itemNode.Attributes["statusCode"];
+                if (statusCodeAttribute != null)
+                {
+                    return int.Parse(statusCodeAttribute.Value);
+                }
+            }
+#warning CGI Add to resource file
+            throw new GlimpseException("Could not find a 'statusCode' attribute");
+        }
+
+        private class IntComparer : IComparer<int>
+        {
+            public int Compare(int x, int y)
+            {
+                return x.CompareTo(y);
             }
         }
     }

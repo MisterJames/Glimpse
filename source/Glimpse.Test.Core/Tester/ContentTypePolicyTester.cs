@@ -14,7 +14,7 @@ namespace Glimpse.Test.Core.Tester
 
         private ContentTypePolicyTester(IList<string> contentTypes)
         {
-            ((ContentTypePolicyConfigurator)this.Configurator).AddContentTypes(contentTypes);
+            ((ContentTypePolicyConfigurator)this.Configurator).AddSupportedContentTypes(contentTypes);
 
             RequestMetadataMock = new Mock<IRequestMetadata>();
             RequestMetadataMock.Setup(r => r.ResponseContentType).Returns(@"text/html");

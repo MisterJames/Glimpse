@@ -1,9 +1,14 @@
-using Glimpse.Core.Extensibility;
-
 namespace Glimpse.Core.Framework
 {
-    public interface IConfigurableExtended : IConfigurable
+    /// <summary>
+    /// Represents a type that can be configured by a <see cref="IConfigurator"/>
+    /// </summary>
+    public interface IConfigurableExtended
     {
+#warning should replace the IConfigurable
+        /// <summary>
+        /// Gets the configurator
+        /// </summary>
         IConfigurator Configurator { get; }
     }
 }

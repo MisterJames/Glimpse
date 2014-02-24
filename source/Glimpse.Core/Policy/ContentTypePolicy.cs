@@ -1,37 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Serialization;
-using Glimpse.Core.Configuration;
 using Glimpse.Core.Extensibility;
 using Glimpse.Core.Framework;
 
 namespace Glimpse.Core.Policy
 {
     /// <summary>
-    /// Policy which will set Glimpse's runtime policy to <c>Off</c> if a Http response's content type is not on the white list.
+    /// Policy which will set Glimpse's runtime policy to <c>Off</c> if a Http response's content type is not supported.
     /// </summary>
     public class ContentTypePolicy : IRuntimePolicy, IConfigurableExtended
     {
-        public IConfigurator Configurator { get; private set; }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ContentTypePolicy" />
         /// </summary>
         public ContentTypePolicy()
         {
-            ContentTypeWhiteList = new List<string>();
-            Configurator = new ContentTypePolicyConfigurator(this);
+            Configurator = new ContentTypePolicyConfigurator();
         }
 
         /// <summary>
-        /// Gets or sets the content type white list.
+        /// Gets the <see cref="ContentTypePolicyConfigurator" /> used by the <see cref="ContentTypePolicy" />
         /// </summary>
-        /// <value>
-        /// The content type white list to validate against.
-        /// </value>
-        public IList<string> ContentTypeWhiteList { get; set; }
-#warning should not be exposed anymore, since it is the responsibility of its configurator
+        public ContentTypePolicyConfigurator Configurator { get; private set; }
+
+        /// <summary>
+        /// Gets the configurator
+        /// </summary>
+        IConfigurator IConfigurableExtended.Configurator { get { return Configurator; } }
 
         /// <summary>
         /// Gets the point in an Http request lifecycle that a policy should execute.
@@ -57,53 +52,12 @@ namespace Glimpse.Core.Policy
             try
             {
                 var contentType = policyContext.RequestMetadata.ResponseContentType.ToLowerInvariant();
-
-                // support for the following content type strings: "text/html" & "text/html; charset=utf-8"
-                return ContentTypeWhiteList.Any(ct => contentType.Contains(ct.ToLowerInvariant())) ? RuntimePolicy.On : RuntimePolicy.Off;
+                return Configurator.SupportedContentTypes.Any(ct => contentType.Contains(ct.ToLowerInvariant())) ? RuntimePolicy.On : RuntimePolicy.Off;
             }
             catch (Exception exception)
             {
                 policyContext.Logger.Warn(Resources.ExecutePolicyWarning, exception, GetType());
                 return RuntimePolicy.Off;
-            }
-        }
-
-        /// <summary>
-        /// Provides implementations an instance of <see cref="Section" /> to self populate any end user configuration options.
-        /// </summary>
-        /// <param name="section">The configuration section, <c>&lt;glimpse&gt;</c> from <c>web.config</c>.</param>
-        /// <remarks>
-        /// Populates the content type white list with values from <c>web.config</c>.
-        /// A list of ratified Http status codes is available in <see href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">Section 10 of RFC 2616</see>, the Http version 1.1 specification.
-        /// </remarks>
-        /// <example>
-        /// Configure the content type white list in <c>web.config</c> with the following entries:
-        /// <code>
-        /// <![CDATA[
-        /// <glimpse defaultRuntimePolicy="On" endpointBaseUri="~/Glimpse.axd">
-        ///     <runtimePolicies>
-        ///         <contentTypes>
-        ///             <!-- <clear /> clear to reset defaults -->
-        ///             <add contentType="{media\type}" />
-        ///         </contentTypes>
-        ///     </runtimePolicies>
-        /// </glimpse>
-        /// ]]>
-        /// </code>
-        /// </example>
-        public void Configure(Section section)
-        {
-            foreach (ContentTypeElement item in section.RuntimePolicies.ContentTypes)
-            {
-                AddContentType(item.ContentType);
-            }
-        }
-
-        internal void AddContentType(string contentType)
-        {
-            if (!ContentTypeWhiteList.Contains(contentType))
-            {
-                ContentTypeWhiteList.Add(contentType);
             }
         }
     }

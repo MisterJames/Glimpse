@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Glimpse.Core.Extensibility;
 using Glimpse.Core.Policy;
-using Glimpse.Core;
 using Glimpse.Test.Core.TestDoubles;
 using Glimpse.Test.Core.Tester;
 using Moq;
@@ -10,7 +9,7 @@ using Xunit;
 
 namespace Glimpse.Test.Core.Policy
 {
-    public class StatusCodePolicyShould:IDisposable
+    public class StatusCodePolicyShould : IDisposable
     {
         private StatusCodePolicyTester tester;
         public StatusCodePolicyTester Policy
@@ -18,7 +17,6 @@ namespace Glimpse.Test.Core.Policy
             get { return tester ?? (tester = StatusCodePolicyTester.Create()); }
             set { tester = value; }
         }
-
 
         public void Dispose()
         {
@@ -42,11 +40,11 @@ namespace Glimpse.Test.Core.Policy
         [Fact]
         public void RespectConfigredStatusCodeList()
         {
-            var codes = new List<int> {5, 6, 7};
+            var codes = new List<int> { 5, 6, 7 };
 
             var policy = new StatusCodePolicy();
-            ((StatusCodePolicyConfigurator)policy.Configurator).AddStatusCodes(codes);
-            
+            policy.Configurator.AddSupportedStatusCodes(codes);
+
             foreach (var code in codes)
             {
                 Policy.RequestMetadataMock.Setup(rm => rm.ResponseStatusCode).Returns(code);

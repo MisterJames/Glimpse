@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Glimpse.Core.Extensibility;
 using Glimpse.Core.Policy;
 using Glimpse.Test.Core.TestDoubles;
@@ -10,7 +8,7 @@ using Xunit;
 
 namespace Glimpse.Test.Core.Policy
 {
-    public class UriPolicyShould:IDisposable
+    public class UriPolicyShould : IDisposable
     {
         private UriPolicyTester tester;
         public UriPolicyTester Policy
@@ -23,18 +21,6 @@ namespace Glimpse.Test.Core.Policy
         {
             Policy = null;
         }
-
-#warning this is not a good check, should check whether elements were added, not the exact same collection
-        //[Fact]
-        //public void ConstructWithRegexList()
-        //{
-        //    var blacklist = new List<Regex>();
-
-        //    var policy = new UriPolicy();
-        //    ((UriPolicyConfigurator)policy.Configurator).AddUris(blacklist);
-
-        //    Assert.Equal(blacklist, policy.UriBlackList);
-        //}
 
         [Fact]
         public void RetainRuntimePolicyWithEmptyBlacklist()
@@ -55,10 +41,9 @@ namespace Glimpse.Test.Core.Policy
         {
             Policy.RequestMetadataMock.Setup(r => r.RequestUri).Returns("http://localhost/admin");
 
-            Policy.UriBlackList.Add(new Regex(".+/admin"));
+            Policy.Configurator.AddUriPatternToIgnore(".+/admin");
 
             Assert.Equal(RuntimePolicy.Off, Policy.Execute(Policy.ContextMock.Object));
-            
         }
 
         [Fact]
@@ -77,7 +62,6 @@ namespace Glimpse.Test.Core.Policy
         public void ExecuteOnBeginRequest()
         {
             Assert.Equal(RuntimeEvent.BeginRequest, Policy.ExecuteOn);
-            
         }
     }
 }

@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Glimpse.Core.Extensibility;
 using Glimpse.Core.Framework;
 using Glimpse.Core.Policy;
@@ -14,7 +13,7 @@ namespace Glimpse.Test.Core.Tester
 
         private UriPolicyTester()
         {
-            ((UriPolicyConfigurator)Configurator).AddUris(new[] { new Regex("blocked") });
+            Configurator.AddUriPatternToIgnore("blocked");
 
             RequestMetadataMock = new Mock<IRequestMetadata>();
             RequestMetadataMock.Setup(r => r.RequestUri).Returns("shouldn't matter!");

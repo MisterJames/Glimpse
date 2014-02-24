@@ -14,7 +14,7 @@ namespace Glimpse.Test.Core.Tester
 
         private StatusCodePolicyTester(IList<int> statusCodes)
         {
-            ((StatusCodePolicyConfigurator)this.Configurator).AddStatusCodes(statusCodes);
+            ((StatusCodePolicyConfigurator)this.Configurator).AddSupportedStatusCodes(statusCodes);
 
             RequestMetadataMock = new Mock<IRequestMetadata>();
             RequestMetadataMock.Setup(r => r.ResponseStatusCode).Returns(500);
