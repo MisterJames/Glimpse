@@ -85,7 +85,6 @@
     <Compile Include="Extensibility\AlternateMethod.cs" />
     <Compile Include="Extensibility\AntiXssEncoder.cs" />
     <Compile Include="Extensibility\CastleInvocationToAlternateMethodContextAdapter.cs" />
-    <Compile Include="Extensibility\CustomConfigurationProvider.cs" />
     <Compile Include="Extensibility\IConfigurableExtended.cs" />
     <Compile Include="Extensibility\IConfigurator.cs" />
     <Compile Include="Extensibility\IDependOnResources.cs" />

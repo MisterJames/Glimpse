@@ -1,5 +1,3 @@
-using Glimpse.Core.Extensibility;
-
 namespace Glimpse.Core.Framework
 {
     /// <summary>
@@ -15,7 +13,7 @@ namespace Glimpse.Core.Framework
         /// <summary>
         /// Will be called when custom configuration is available for the given custom configuration key
         /// </summary>
-        /// <param name="customConfigurationProvider">The custom configuration provider</param>
-        void ProcessCustomConfiguration(CustomConfigurationProvider customConfigurationProvider);
+        /// <param name="customConfiguration">The custom configuration</param>
+        void ProcessCustomConfiguration(string customConfiguration);
     }
 }

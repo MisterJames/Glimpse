@@ -499,7 +499,7 @@ namespace Glimpse.Core.Framework
                         string customConfiguration = configuredDiscoverableCollection.GetCustomConfiguration(configurator.CustomConfigurationKey, configurator.GetType());
                         if (!string.IsNullOrEmpty(customConfiguration))
                         {
-                            configurator.ProcessCustomConfiguration(new CustomConfigurationProvider(customConfiguration));
+                            configurator.ProcessCustomConfiguration(customConfiguration);
                         }
                     }       
                 }
@@ -509,7 +509,7 @@ namespace Glimpse.Core.Framework
                     string customConfiguration = configuredDiscoverableCollection.GetCustomConfiguration(configurator.CustomConfigurationKey);
                     if (!string.IsNullOrEmpty(customConfiguration))
                     {
-                        configurator.ProcessCustomConfiguration(new CustomConfigurationProvider(customConfiguration));
+                        configurator.ProcessCustomConfiguration(customConfiguration);
                     }
                 }
             }

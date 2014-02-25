@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using Glimpse.Core.Extensibility;
 using Glimpse.Core.Framework;
 
 namespace Glimpse.Core.Policy
@@ -36,12 +35,11 @@ namespace Glimpse.Core.Policy
         /// <summary>
         /// Will be called when custom configuration is available for the given custom configuration key
         /// </summary>
-        /// <param name="customConfigurationProvider">The custom configuration provider</param>
-        public void ProcessCustomConfiguration(CustomConfigurationProvider customConfigurationProvider)
+        /// <param name="customConfiguration">The custom configuration</param>
+        public void ProcessCustomConfiguration(string customConfiguration)
         {
             try
             {
-                string customConfiguration = customConfigurationProvider.GetCustomConfigurationAs<string>();
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(customConfiguration);
 
