@@ -7,6 +7,10 @@ using Tavis.UriTemplates;
 
 namespace Glimpse.Core.Framework
 {
+    // Recommendation: replace the script tag generator with a script manager and
+    //                 bundle all scripts into a resource that can be retrieved 
+    //                 with a single request.
+
     /// <summary>
     /// Generator of Glimpse script tags
     /// </summary>
