@@ -131,6 +131,8 @@
     <Compile Include="Framework\Support\IExecutionTask.cs" />
     <Compile Include="Framework\UriTemplateResourceEndpointConfiguration.cs" />
     <Compile Include="PreBodyTagInjectionStream.cs" />
+    <Compile Include="ResourceResult\StringResourceResult.cs" />
+    <Compile Include="Resource\ClientScriptResource.cs" />
     <Compile Include="Resource\ConfigurationScriptResource.cs">
       <SubType>Code</SubType>
     </Compile>
