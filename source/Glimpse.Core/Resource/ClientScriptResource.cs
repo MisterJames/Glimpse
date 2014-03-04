@@ -84,6 +84,9 @@ namespace Glimpse.Core.Resource
                 logger.Warn(Core.Resources.RenderClientScriptImproperImplementationWarning, clientScript.GetType());
             }
 
+            // test for correct wiring...
+            sb.AppendLine(@"<script type='text/javascript'>alert('foo');</script>");
+
             return new CacheControlDecorator(0, CacheSetting.NoCache, new StringResourceResult(@"text/javascript") { Text = sb.ToString() });
         }
 
