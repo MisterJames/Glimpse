@@ -31,16 +31,20 @@ namespace Glimpse.Core.Framework
             var scripts = clientScripts.OrderBy(cs => cs.Order).GroupBy(x => x.Order).ToDictionary(x => x.Key, y => y.ToList());
             foreach (var scriptGroup in scripts)
             {
+                var hash = configuration.Hash;
                 switch (scriptGroup.Key)
                 {
                     case ScriptOrder.RequestDataScript:
-                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}&{2}={3}'></script>", ClientScriptResource.InternalName, scriptGroup.Key, ClientScriptResource.GlimpseRequestId, glimpseRequestId);
+                        // expects requestId, hash, callback
+                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}&requestId={2}&hash={3}&callback=glimpse.data.initData'></script>", RequestResource.InternalName, scriptGroup.Key, glimpseRequestId, hash);
                         break;
                     case ScriptOrder.ClientInterfaceScript:
-                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}'></script>", ClientScriptResource.InternalName, scriptGroup.Key);
+                        // expects hash
+                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}&hash={2}'></script>", ClientScriptResource.InternalName, scriptGroup.Key, hash);
                         break;
                     case ScriptOrder.RequestMetadataScript:
-                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}'></script>", ClientScriptResource.InternalName, scriptGroup.Key);
+                        // expects hash, callback
+                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}&hash={2}&callback=glimpse.data.initMetadata'></script>", MetadataResource.InternalName, scriptGroup.Key, hash);
                         break;
                     default:
                         // the three above are internal, all other cases use the following

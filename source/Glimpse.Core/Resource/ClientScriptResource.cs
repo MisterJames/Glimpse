@@ -81,10 +81,20 @@ namespace Glimpse.Core.Resource
                     // glimpse_request
                     // RequestResource
                     // expects requestId, hash, callback
+                    var requestResource = resource as RequestResource;
+                    if (requestResource != null)
+                    {
+                        return requestResource.Execute(context);
+                    }
 
                     // glimpse_metadata
                     // MetadataResource
                     // expects hash, callback
+                    var metadataResource = resource as MetadataResource;
+                    if (metadataResource != null)
+                    {
+                        return metadataResource.Execute(context);
+                    }
                         
                     // glimpse_client
                     // ClientResource
