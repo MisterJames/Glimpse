@@ -5,6 +5,7 @@ using System.Text;
 using Glimpse.Core.Extensibility;
 using Glimpse.Core.Framework;
 using Glimpse.Core.ResourceResult;
+using Tavis.UriTemplates;
 
 namespace Glimpse.Core.Resource
 {
@@ -52,12 +53,12 @@ namespace Glimpse.Core.Resource
             }
 
             // heavy lifting time...
-            var glimpseRequestId = context.Parameters[GlimpseRequestId];
             var configuration = GlimpseRuntime.Instance.Configuration;
-            var scripts = configuration.ClientScripts.Where(x => x.Order == order);
             var resourceEndpoint = configuration.ResourceEndpoint;
-            var resources = configuration.Resources;
+            var scripts = configuration.ClientScripts.Where(x => x.Order == order);
             var logger = configuration.Logger;
+            var encoder = configuration.HtmlEncoder;
+            var resources = configuration.Resources;
             var sb = new StringBuilder();
 
             foreach (var clientScript in scripts)
@@ -66,7 +67,22 @@ namespace Glimpse.Core.Resource
                 var dynamicScript = clientScript as IDynamicClientScript;
                 if (dynamicScript != null)
                 {
-                    
+                    //var glimpseRequestId = context.Parameters[GlimpseRequestId];
+                    var path = dynamicScript.GetResourceName();
+                    var resource = resources.FirstOrDefault(r => r.Name.Equals(path, StringComparison.InvariantCultureIgnoreCase));
+
+                    if (resource == null)
+                    {
+                        logger.Warn(Resources.RenderClientScriptMissingResourceWarning, clientScript.GetType(), path);
+                        continue;
+                    }
+
+                    var uriTemplate = resourceEndpoint.GenerateUriTemplate(resource, configuration.EndpointBaseUri, logger);
+
+                    // cheating, not using any params at this point, I know...
+                    var uri = new UriTemplate(uriTemplate).Resolve();
+                    // what to do here? 
+
                     continue;
                 }
 
@@ -77,7 +93,7 @@ namespace Glimpse.Core.Resource
                     // question: do we need version when resolving a static resource?
                     // suggestion: refactor GetUri to be GetPath...differentiate between local static files
                     //             and, for example, CDN files that need to be included such as jQuery
-                    staticScript.GetUri("");
+                    var scriptPath = staticScript.GetUri("");
                     continue;
                 }
 
@@ -89,6 +105,23 @@ namespace Glimpse.Core.Resource
 
             return new CacheControlDecorator(0, CacheSetting.NoCache, new StringResourceResult(@"text/javascript") { Text = sb.ToString() });
         }
+
+        private static UriTemplate SetParameters(UriTemplate template,
+            IEnumerable<KeyValuePair<string, string>> nameValues)
+        {
+            if (nameValues == null)
+            {
+                return template;
+            }
+
+            foreach (var pair in nameValues)
+            {
+                template.SetParameter(pair.Key, pair.Value);
+            }
+
+            return template;
+        }
+
 
         public string Key
         {
