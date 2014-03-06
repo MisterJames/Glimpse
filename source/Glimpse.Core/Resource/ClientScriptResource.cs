@@ -77,11 +77,9 @@ namespace Glimpse.Core.Resource
                         continue;
                     }
 
-                    var uriTemplate = resourceEndpoint.GenerateUriTemplate(resource, configuration.EndpointBaseUri, logger);
+                    // here I need to work with the resource...
 
-                    // cheating, not using any params at this point, I know...
-                    var uri = new UriTemplate(uriTemplate).Resolve();
-                    // what to do here? 
+
 
                     continue;
                 }
