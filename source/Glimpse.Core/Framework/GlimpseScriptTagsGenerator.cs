@@ -31,6 +31,14 @@ namespace Glimpse.Core.Framework
             var scripts = clientScripts.OrderBy(cs => cs.Order).GroupBy(x => x.Order).ToDictionary(x => x.Key, y => y.ToList());
             foreach (var scriptGroup in scripts)
             {
+                switch (scriptGroup.Key)
+                {
+                    case ScriptOrder.RequestDataScript:
+                        // do specific case
+                        break;
+                    default:
+                        // all other cases
+                }
                 stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n=glimpse_clientscripts&order={0}&{1}={2}'></script>", scriptGroup.Key, ClientScriptResource.GlimpseRequestId, glimpseRequestId);
             }
 
