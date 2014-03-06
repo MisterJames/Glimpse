@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Glimpse.Core.Extensibility;
@@ -77,13 +78,24 @@ namespace Glimpse.Core.Resource
                         continue;
                     }
 
-                    // here I need to work with the resource...
+                    // glimpse_request
+                    // RequestResource
+                    // expects requestId, hash, callback
+
+                    // glimpse_metadata
+                    // MetadataResource
+                    // expects hash, callback
+                        
+                    // glimpse_client
+                    // ClientResource
+                    // expects hash
                     var clientResource = resource as ClientResource;
                     if (clientResource != null)
                     {
                         // holy crap this works...
                         return clientResource.Execute(context);
                     }
+
 
                     continue;
                 }
