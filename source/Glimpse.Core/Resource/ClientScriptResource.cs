@@ -78,8 +78,11 @@ namespace Glimpse.Core.Resource
                     }
 
                     // here I need to work with the resource...
-
-
+                    var clientResource = resource as ClientResource;
+                    if (clientResource != null)
+                    {
+                        var foo = "bar";
+                    }
 
                     continue;
                 }
