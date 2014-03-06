@@ -81,7 +81,8 @@ namespace Glimpse.Core.Resource
                     var clientResource = resource as ClientResource;
                     if (clientResource != null)
                     {
-                        var foo = "bar";
+                        // holy crap this works...
+                        return clientResource.Execute(context);
                     }
 
                     continue;

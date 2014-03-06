@@ -34,14 +34,20 @@ namespace Glimpse.Core.Framework
                 switch (scriptGroup.Key)
                 {
                     case ScriptOrder.RequestDataScript:
-                        // do specific case
+                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}&{2}={3}'></script>", ClientScriptResource.InternalName, scriptGroup.Key, ClientScriptResource.GlimpseRequestId, glimpseRequestId);
+                        break;
+                    case ScriptOrder.ClientInterfaceScript:
+                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}'></script>", ClientScriptResource.InternalName, scriptGroup.Key);
+                        break;
+                    case ScriptOrder.RequestMetadataScript:
+                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}'></script>", ClientScriptResource.InternalName, scriptGroup.Key);
                         break;
                     default:
-                        // all other cases
+                        // the three above are internal, all other cases use the following
+                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}'></script>", ClientScriptResource.InternalName, scriptGroup.Key);
+                        break;
                 }
-                stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n=glimpse_clientscripts&order={0}&{1}={2}'></script>", scriptGroup.Key, ClientScriptResource.GlimpseRequestId, glimpseRequestId);
             }
-
 
             return stringBuilder.ToString();
         }
