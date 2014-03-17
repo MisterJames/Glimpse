@@ -28,7 +28,11 @@ namespace Glimpse.Core.Framework
 
             var stringBuilder = new StringBuilder();
 
-            var scripts = clientScripts.OrderBy(cs => cs.Order).GroupBy(x => x.Order).ToDictionary(x => x.Key, y => y.ToList());
+            var scripts = clientScripts
+                .OrderBy(cs => cs.Order)
+                .GroupBy(x => x.Order)
+                .ToDictionary(x => x.Key, y => y.ToList());
+
             foreach (var scriptGroup in scripts)
             {
                 var hash = configuration.Hash;
@@ -48,7 +52,7 @@ namespace Glimpse.Core.Framework
                         break;
                     default:
                         // the three above are internal, all other cases use the following
-                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}'></script>", ClientScriptResource.InternalName, scriptGroup.Key);
+                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}'></script>", "Some-Name-Here", scriptGroup.Key);
                         break;
                 }
             }
