@@ -10,7 +10,7 @@ using Tavis.UriTemplates;
 
 namespace Glimpse.Core.Resource
 {
-    class ClientScriptResource : IResource, IKey
+    class ScriptBundlingResource : IResource, IKey
     {
         internal const string InternalName = "glimpse_clientscripts";
         internal const string GlimpseRequestId = "glimpse_request_id";
@@ -76,34 +76,6 @@ namespace Glimpse.Core.Resource
                     {
                         logger.Warn(Resources.RenderClientScriptMissingResourceWarning, clientScript.GetType(), path);
                         continue;
-                    }
-
-                    // glimpse_request
-                    // RequestResource
-                    // expects requestId, hash, callback
-                    var requestResource = resource as RequestResource;
-                    if (requestResource != null)
-                    {
-                        return requestResource.Execute(context);
-                    }
-
-                    // glimpse_metadata
-                    // MetadataResource
-                    // expects hash, callback
-                    var metadataResource = resource as MetadataResource;
-                    if (metadataResource != null)
-                    {
-                        return metadataResource.Execute(context);
-                    }
-                        
-                    // glimpse_client
-                    // ClientResource
-                    // expects hash
-                    var clientResource = resource as ClientResource;
-                    if (clientResource != null)
-                    {
-                        // holy crap this works...
-                        return clientResource.Execute(context);
                     }
 
 

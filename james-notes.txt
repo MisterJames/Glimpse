@@ -1,0 +1,21 @@
+
+GlimpseConfiguration.cs - hashing for client scripts
+
+Handler pipeline - this is where the client scripts will be output, merged on secondary/tertiary requests
+
+IStaticClientScript - currently used to register a client script, but doesn't affect bundle rendering
+
+ClientScript - In enum this refers to the main Glimpse payload
+
+IResource - use this to payload the bundled JS
+
+IDynamicClientScript - used to embed the script in the page
+
+GlimpseConfiguration - access the client scripts
+
+Create:
+  ClientScriptResource
+  StringResourceResult (take a param for content encoding type)
+
+
+

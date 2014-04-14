@@ -62,7 +62,7 @@ namespace Glimpse.Test.Core.Resource
         public void ReturnCachedResult()
         {
             //var contextMock = new Mock<IResourceContext>();
-            //var resource = new ClientScriptResource();
+            //var resource = new ScriptBundlingResource();
             //var result = resource.Execute(contextMock.Object);
 
             //Assert.NotNull(result as CacheControlDecorator);

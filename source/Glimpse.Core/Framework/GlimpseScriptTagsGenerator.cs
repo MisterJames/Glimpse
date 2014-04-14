@@ -44,7 +44,7 @@ namespace Glimpse.Core.Framework
                         break;
                     case ScriptOrder.ClientInterfaceScript:
                         // expects hash
-                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}&hash={2}'></script>", ClientScriptResource.InternalName, scriptGroup.Key, hash);
+                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}&hash={2}'></script>", ClientResource.InternalName, scriptGroup.Key, hash);
                         break;
                     case ScriptOrder.RequestMetadataScript:
                         // expects hash, callback
@@ -52,7 +52,7 @@ namespace Glimpse.Core.Framework
                         break;
                     default:
                         // the three above are internal, all other cases use the following
-                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}'></script>", "Some-Name-Here", scriptGroup.Key);
+                        stringBuilder.AppendFormat(@"<script type='text/javascript' src='/glimpse.axd?n={0}&order={1}'></script>", ClientScriptResource.InternalName, scriptGroup.Key);
                         break;
                 }
             }
