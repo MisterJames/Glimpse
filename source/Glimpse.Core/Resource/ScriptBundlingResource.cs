@@ -10,9 +10,66 @@ using Tavis.UriTemplates;
 
 namespace Glimpse.Core.Resource
 {
-    class ScriptBundlingResource : IResource, IKey
+
+    public class ScriptBundlingResource : IResource, IKey
     {
-        internal const string InternalName = "glimpse_clientscripts";
+        private class BundlingRequestResponseAdaptor : IRequestResponseAdapter
+        {
+            private IRequestResponseAdapter Inner { get; set; }
+
+            private StringBuilder Buffer { get; set; }
+
+            public BundlingRequestResponseAdaptor(IRequestResponseAdapter inner, StringBuilder buffer)
+            {
+                Inner = inner;
+                Buffer = buffer;
+            }
+
+            public object RuntimeContext
+            {
+                get { return Inner.RuntimeContext; }
+            }
+
+            public IRequestMetadata RequestMetadata
+            {
+                get { return Inner.RequestMetadata; }
+            }
+
+            public void SetHttpResponseHeader(string name, string value)
+            {
+                Inner.SetHttpResponseHeader(name, value);
+            }
+
+            public void SetHttpResponseStatusCode(int statusCode)
+            {
+                Inner.SetHttpResponseStatusCode(statusCode);
+            }
+
+            public void SetCookie(string name, string value)
+            {
+                Inner.SetCookie(name, value);
+            }
+
+            public void InjectHttpResponseBody(string htmlSnippet)
+            {
+                Inner.InjectHttpResponseBody(htmlSnippet);
+            }
+
+            public void WriteHttpResponse(byte[] content)
+            {
+                // convert to string, push to buffer
+                //var message = System.Text.Encoding.Convert(Encoding.UTF8, )
+                throw new NotImplementedException();
+            }
+
+            public void WriteHttpResponse(string content)
+            {
+                Buffer.Append(content);
+            }
+        }
+
+
+        internal const string InternalName = "glimpse_scriptbundling";
         internal const string GlimpseRequestId = "glimpse_request_id";
         internal const string OrderParameterName = "order";
 
@@ -61,6 +118,8 @@ namespace Glimpse.Core.Resource
             var encoder = configuration.HtmlEncoder;
             var resources = configuration.Resources;
             var sb = new StringBuilder();
+            var hash = context.Parameters["hash"];
+            var resourceAdapter = new BundlingRequestResponseAdaptor(null, sb);
 
             foreach (var clientScript in scripts)
             {
@@ -68,28 +127,34 @@ namespace Glimpse.Core.Resource
                 var dynamicScript = clientScript as IDynamicClientScript;
                 if (dynamicScript != null)
                 {
-                    //var glimpseRequestId = context.Parameters[GlimpseRequestId];
-                    var path = dynamicScript.GetResourceName();
-                    var resource = resources.FirstOrDefault(r => r.Name.Equals(path, StringComparison.InvariantCultureIgnoreCase));
+                    ////var glimpseRequestId = context.Parameters[GlimpseRequestId];
+                    //var path = dynamicScript.GetResourceName();
+                    //var resource = resources.FirstOrDefault(r => r.Name.Equals(path, StringComparison.InvariantCultureIgnoreCase));
 
-                    if (resource == null)
-                    {
-                        logger.Warn(Resources.RenderClientScriptMissingResourceWarning, clientScript.GetType(), path);
-                        continue;
-                    }
+                    //if (resource == null)
+                    //{
+                    //    logger.Warn(Resources.RenderClientScriptMissingResourceWarning, clientScript.GetType(), path);
+                    //    continue;
+                    //}
 
+                    //var resourceResult = resource.Execute(context);
 
-                    continue;
+                    //// create new context, pass in string etc.
+                    //var generatedScript = resourceResult.Execute();
+
+                    //continue;
                 }
+
 
                 var staticScript = clientScript as IStaticClientScript;
                 if (staticScript != null)
                 {
-                    // note: don't currently have access through configuration for version
-                    // question: do we need version when resolving a static resource?
-                    // suggestion: refactor GetUri to be GetPath...differentiate between local static files
-                    //             and, for example, CDN files that need to be included such as jQuery
-                    var scriptPath = staticScript.GetUri("");
+                    var scriptPath = staticScript.GetUri(hash);
+
+                    // read from disk
+                    // add to string builder
+                    // return StringResourceResult from SB
+
                     continue;
                 }
 
