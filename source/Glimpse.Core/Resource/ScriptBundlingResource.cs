@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Glimpse.Core.Extensibility;
@@ -110,59 +111,29 @@ namespace Glimpse.Core.Resource
                 return new StatusCodeResourceResult(404, string.Format("Could not resolve ScriptOrder for value provided '{0}'.", orderName));
             }
 
-            // heavy lifting time...
+            // locate scripts and add to response
             var configuration = GlimpseRuntime.Instance.Configuration;
-            var resourceEndpoint = configuration.ResourceEndpoint;
             var scripts = configuration.ClientScripts.Where(x => x.Order == order);
             var logger = configuration.Logger;
-            var encoder = configuration.HtmlEncoder;
-            var resources = configuration.Resources;
             var sb = new StringBuilder();
             var hash = context.Parameters["hash"];
-            var resourceAdapter = new BundlingRequestResponseAdaptor(null, sb);
 
             foreach (var clientScript in scripts)
             {
                 
-                var dynamicScript = clientScript as IDynamicClientScript;
-                if (dynamicScript != null)
-                {
-                    ////var glimpseRequestId = context.Parameters[GlimpseRequestId];
-                    //var path = dynamicScript.GetResourceName();
-                    //var resource = resources.FirstOrDefault(r => r.Name.Equals(path, StringComparison.InvariantCultureIgnoreCase));
-
-                    //if (resource == null)
-                    //{
-                    //    logger.Warn(Resources.RenderClientScriptMissingResourceWarning, clientScript.GetType(), path);
-                    //    continue;
-                    //}
-
-                    //var resourceResult = resource.Execute(context);
-
-                    //// create new context, pass in string etc.
-                    //var generatedScript = resourceResult.Execute();
-
-                    //continue;
-                }
-
-
                 var staticScript = clientScript as IStaticClientScript;
                 if (staticScript != null)
                 {
                     var scriptPath = staticScript.GetUri(hash);
 
-                    // read from disk
-                    // add to string builder
-                    // return StringResourceResult from SB
-
+                    var scriptContents = File.ReadAllText(scriptPath);
+                    sb.Append(scriptContents);
+                    
                     continue;
                 }
 
                 logger.Warn(Core.Resources.RenderClientScriptImproperImplementationWarning, clientScript.GetType());
             }
-
-            // test for correct wiring...
-            sb.AppendLine(@"<script type='text/javascript'>alert('foo');</script>");
 
             return new CacheControlDecorator(0, CacheSetting.NoCache, new StringResourceResult(@"text/javascript") { Text = sb.ToString() });
         }

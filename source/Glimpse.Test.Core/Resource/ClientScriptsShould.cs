@@ -12,25 +12,26 @@ using Xunit;
 
 namespace Glimpse.Test.Core.Resource
 {
+    // todo: this needs to be renamed and cleaned up
     public class ClientScriptsShould
     {
         public void ProvideProperName()
         {
-            var resource = new ClientScriptResource();
+            var resource = new ScriptBundlingResource();
             Assert.Equal("glimpse_clientscripts", resource.Name);
         }
 
         [Fact]
         public void ReturnOneParameterKey()
         {
-            var resource = new ClientScriptResource();
+            var resource = new ScriptBundlingResource();
             Assert.Equal(1, resource.Parameters.Count());
         }
 
         [Fact]
         public void ThrowExceptionWithNullParameters()
         {
-            var resource = new ClientScriptResource();
+            var resource = new ScriptBundlingResource();
 
             Assert.Throws<ArgumentNullException>(() => resource.Execute(null));
         }
@@ -41,7 +42,7 @@ namespace Glimpse.Test.Core.Resource
             var contextMock = new Mock<IResourceContext>();
             contextMock.Setup(c => c.Parameters).Returns(new Dictionary<string, string> { { "order", "some-non-existant-thing-in-enum" } });
 
-            var resource = new ClientScriptResource();
+            var resource = new ScriptBundlingResource();
 
             var result = resource.Execute(contextMock.Object);
             
