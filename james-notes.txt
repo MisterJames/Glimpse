@@ -9,13 +9,19 @@ ClientScript - In enum this refers to the main Glimpse payload
 
 IResource - use this to payload the bundled JS
 
-IDynamicClientScript - used to embed the script in the page
+IDynamicClientScript - used to embed core scripts in the page
 
 GlimpseConfiguration - access the client scripts
 
 Create:
   ClientScriptResource
   StringResourceResult (take a param for content encoding type)
+  
+RequestResponseAdapterDecorator(IRequestResponseAdapter ) : IRequestResponseAdapter
+ - WriteHttpResponse writes to internal bufferish thing
+
+ - 
 
 
+https://github.com/avanderhoorn/Glimpse.Sample.Extensions/commit/e3d94258cde57a4414e6481a1cc3dc9f77c37e08
 
